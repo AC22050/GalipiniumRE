@@ -16,6 +16,4 @@ echo "Installing required dependencies (PyQt6, PyQt6-WebEngine, cryptography, nu
 pip install --upgrade pip
 pip install PyQt6 PyQt6-WebEngine cryptography numpy
 
-echo "Installation completed successfully!"
-echo "To launch the browser, use the following commands:"
-echo "source venv/bin/activate && python3 browser.py"
+echo "Installation completed successfully bro"
