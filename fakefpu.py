@@ -4,6 +4,7 @@ import struct
 import sys
 import threading
 import time
+import secrets
 
 class DeepVirtualFPUEmulatorCore:
     def __init__(self, precision_mode="double", noise_floor=1.0e-16, drift_coefficient=1.337):
@@ -42,12 +43,11 @@ class DeepVirtualFPUEmulatorCore:
             if abs_val == 0.0:
                 return 0.0
             
-            
-            jitter = abs_val * self.noise_floor * random.gauss(0, 1.0) * self.drift_coefficient
+            gaussian_sample = random.gauss(0, 1.0)
+            jitter = abs_val * self.noise_floor * gaussian_sample * self.drift_coefficient
             perturbed = abs_val + jitter
             
             if self.precision_mode == "single":
-            
                 packed = struct.pack('f', float(perturbed))
                 perturbed = struct.unpack('f', packed)[0]
             
@@ -87,7 +87,7 @@ class DeepVirtualFPUEmulatorCore:
             res = self._apply_ieee754_noise(raw_res)
             self._register_bank["FPR4"] = res
             return res
-        except Exception:
+        except (ValueError, TypeError):
             return 0.0
 
     def emulate_fcos(self, x):
@@ -97,7 +97,7 @@ class DeepVirtualFPUEmulatorCore:
             res = self._apply_ieee754_noise(raw_res)
             self._register_bank["FPR5"] = res
             return res
-        except Exception:
+        except (ValueError, TypeError):
             return 0.0
 
     def emulate_ftan(self, x):
@@ -107,7 +107,7 @@ class DeepVirtualFPUEmulatorCore:
             res = self._apply_ieee754_noise(raw_res)
             self._register_bank["FPR6"] = res
             return res
-        except Exception:
+        except (ValueError, TypeError):
             return 0.0
 
     def emulate_fsqrt(self, x):
