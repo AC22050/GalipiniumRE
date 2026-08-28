@@ -18,7 +18,7 @@ from PyQt6.QtWebEngineCore import (
     QWebEngineDownloadRequest, QWebEngineScript
 )
 
-# --- MODÜL ENTEGRASYONLARI ---
+
 from fakefpu import get_virtual_fpu_instance
 from faketcpip import get_virtual_tcpip_instance
 from fakewebgl import get_hyper_sophisticated_webgl_canvas_shield_instance
@@ -31,8 +31,8 @@ class CustomWebEnginePage(QWebEnginePage):
         self.webgl_shield_instance = get_hyper_sophisticated_webgl_canvas_shield_instance()
 
     def certificateError(self, error):
-        error.acceptCertificate()
-        return True
+        
+        return False
 
 
 class BrowserWindow(QMainWindow):
@@ -55,7 +55,7 @@ class BrowserWindow(QMainWindow):
         self.configure_profile()
         self.profile.downloadRequested.connect(self.handle_download)
 
-        # --- KRİTİK: WEBGL & CANVAS KESİN BLOKLAMA ENJEKSİYONU ---
+        -
         self.inject_global_anti_fingerprint_script()
 
         central_widget = QWidget()
@@ -353,18 +353,18 @@ class BrowserWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    # --- KRİTİK GPU VE WEBGL KARA LİSTE BAYRAKLARI ---
+   
     sys.argv.append("--use-angle=swiftshader")
     sys.argv.append("--disable-gpu")
     sys.argv.append("--disable-gpu-shader-disk-cache")
     sys.argv.append("--enable-unsafe-swiftshader")
     
-    # --- DNS VE WEBRTC SIZINTI ÖNLEME BAYRAKLARI ---
+    
     sys.argv.append("--force-webrtc-ip-handling-policy=disable_non_proxied_udp")
-    sys.argv.append("--disable-dns-prefetch")             # Arka planda DNS sorgusu yapılmasını engeller
-    sys.argv.append("--disable-domain-reliability")      # Domain hata raporlama izlemelerini kapatır
-    sys.argv.append("--disable-background-networking")   # Arka plan ağ trafiğini kısıtlar
-    sys.argv.append("--disable-sync")                    # Senkronizasyon servislerini devre dışı bırakır
+    sys.argv.append("--disable-dns-prefetch")             
+    sys.argv.append("--disable-domain-reliability")    
+    sys.argv.append("--disable-background-networking")   
+    sys.argv.append("--disable-sync")                    
     sys.argv.append("--disable-features=NetworkServiceInProcess")
     
     app = QApplication(sys.argv)
