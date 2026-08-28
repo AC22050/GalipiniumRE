@@ -64,7 +64,7 @@ class DeepVirtualTCPIPStackCore:
             if payload_marker_idx != -1 and payload_marker_idx < 64:
                 return stripped[payload_marker_idx + 2:]
             return stripped[32:]
-        except Exception:
+        except (IndexError, TypeError, ValueError):
             return obfuscated_payload
 
     def encrypt_packet_stream(self, data: bytes) -> bytes:
@@ -77,7 +77,9 @@ class DeepVirtualTCPIPStackCore:
             decrypted_noisy = self.cipher.decrypt(encrypted_data)
             original_data = self.strip_network_noise(decrypted_noisy)
             return original_data
-        except (InvalidToken, Exception):
+        except InvalidToken:
+            return b""
+        except (TypeError, ValueError):
             return b""
 
     def create_spoofed_socket(self, family=socket.AF_INET, sock_type=socket.SOCK_STREAM):
