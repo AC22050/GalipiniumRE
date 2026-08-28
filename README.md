@@ -7,6 +7,21 @@
 
 **GalipiniumRE**, gelişmiş tarayıcı parmak izi (fingerprinting) engelleme, donanım düzeyinde izleme koruması, DNS/WebRTC sızıntı önleme ve bellek tabanlı (amnesic) çalışma mimarisine sahip ultra güvenli bir ağ tarayıcısıdır.
 
+## Legal Disclaimer / Sorumluluk Reddi
+
+**Disclaimer:** This software (`GalipiniumRE`) is provided for educational and authorized security research purposes only. This tool is designed to be used in dual-use scenarios (penetration testing, security auditing, and system analysis). 
+
+The author (**AC22050**) is **NOT** responsible for any misuse, illegal activities, or damage caused by this software. By downloading, compiling, or using this tool, you acknowledge that you assume total responsibility and legal liability for all actions performed with it. 
+
+Unauthorized access, disruption, or exploitation of computer systems without explicit prior permission is strictly illegal. It is the end user's responsibility to obey all applicable local, state, and federal laws.
+
+## Yasal Uyarı ve Sorumluluk Reddi (Disclaimer)
+
+**DİKKAT:** Bu yazılım (`GalipiniumRE`), yalnızca eğitim, yetkilendirilmiş sızma testleri, güvenlik denetimleri ve siber güvenlik araştırmaları amacıyla geliştirilmiştir. Çift kullanımlı (dual-use) niteliğe sahip bir güvenlik aracıdır.
+
+Yazılımın geliştiricisi (**AC22050**), bu programın kötüye kullanımı, yasa dışı faaliyetler veya herhangi bir sistem hasarından dolayı **hiçbir koşulda sorumlu tutulamaz**. Bu yazılımı kaynak kod olarak veya derlenmiş ikili (binary) biçimde indiren, kopyalayan ya da kullanan her kullanıcı; doğabilecek tüm hukuki ve cezai sorumluluğu peşinen kabul etmiş sayılır.
+
+İlgili sistemler üzerinde açıkça yazılı izin almaksızın test veya yetkisiz erişim gerçekleştirmek yasalara aykırıdır. Tüm sorumluluk münhasıran son kullanıcıya aittir.
 ---
 
 ## 📌 Öne Çıkan Özellikler
