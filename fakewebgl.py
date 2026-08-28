@@ -6,6 +6,7 @@ import time
 import hashlib
 import base64
 import zlib
+import secrets
 import numpy as np
 
 class HyperSophisticatedRealtimeWebGLCanvasShield:
@@ -15,7 +16,7 @@ class HyperSophisticatedRealtimeWebGLCanvasShield:
         self.precision_mode = precision_mode
         self._lock = threading.Lock()
         self._execution_cycles = 0
-        self._entropy_accumulator = 0x1337BEEFCAFE
+        self._entropy_accumulator = secrets.randbits(31)
         self._tensor_noise_matrix = np.random.normal(0, 1.0e-5, (256, 256))
         self._initialize_mathematical_constants()
         self._compile_advanced_shader_registry()
@@ -43,12 +44,13 @@ class HyperSophisticatedRealtimeWebGLCanvasShield:
         with self._lock:
             self._shader_registry = {}
             for i in range(128):
-                key_hash = hashlib.sha3_512(f"shader_node_{i}_{time.time_ns()}".encode()).hexdigest()
+                secure_token = secrets.token_hex(32)
+                key_hash = hashlib.sha3_512(f"shader_node_{i}_{secure_token}".encode()).hexdigest()
                 self._shader_registry[key_hash] = {
                     "compiled": True,
                     "optimization_level": 3,
                     "vectorized": True,
-                    "tensor_weight": random.uniform(0.9, 1.1)
+                    "tensor_weight": secrets.randbelow(1000000) / 5000000.0 + 0.9
                 }
 
     def _apply_realtime_fpu_perturbation(self, val: float) -> float:
@@ -106,7 +108,6 @@ class HyperSophisticatedRealtimeWebGLCanvasShield:
             protected_buffer = bytearray(pixel_buffer)
             stride = width * 4
 
-            
             for y in range(height):
                 row_idx = y * stride
                 matrix_y = y % 256
@@ -117,18 +118,18 @@ class HyperSophisticatedRealtimeWebGLCanvasShield:
                         tensor_factor = self._tensor_noise_matrix[matrix_y][matrix_x]
                         
                         if abs(tensor_factor) > 0.000008:
-                            channel = (x + y) % 3  
+                            channel = (x + y) % 3
                             target_offset = idx + channel
-                            current_val = protected_buffer[target_offset]
-                            
-                            
-                            delta = 1 if tensor_factor > 0 else -1
-                            if current_val >= 254:
-                                delta = -1
-                            elif current_val <= 1:
-                                delta = 1
+                            if target_offset < total_bytes:
+                                current_val = protected_buffer[target_offset]
                                 
-                            protected_buffer[target_offset] = current_val + delta
+                                delta = 1 if tensor_factor > 0 else -1
+                                if current_val >= 254:
+                                    delta = -1
+                                elif current_val <= 1:
+                                    delta = 1
+                                    
+                                protected_buffer[target_offset] = current_val + delta
 
             return protected_buffer
 
@@ -141,15 +142,14 @@ class HyperSophisticatedRealtimeWebGLCanvasShield:
                 header, encoded_payload = data_url.split(",", 1)
                 raw_bytes = base64.b64decode(encoded_payload)
                 
-                
                 masked_bytes = bytearray(raw_bytes)
-                if len(masked_bytes) > 32:
+                if len(masked_bytes) > 15:
                     checksum_xor = masked_bytes[15] ^ 0xA5
                     masked_bytes[15] = checksum_xor
                     
                 re_encoded = base64.b64encode(masked_bytes).decode('utf-8')
                 return f"{header},{re_encoded}"
-            except Exception:
+            except (ValueError, TypeError, base64.binascii.Error):
                 return data_url
 
     def get_deep_telemetry_metrics(self) -> dict:
