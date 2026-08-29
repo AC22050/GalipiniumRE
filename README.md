@@ -45,6 +45,8 @@ GalipiniumRE/
 ├── fakewebgl.py           # WebGL & Canvas gürültü/maskeleme modülü
 ├── LICENSE                # The Unlicense (Kamu Malı) Lisansı
 └── README.md              # Proje dokümantasyonu
+└── install.sh             # Linux sistemler için indirme betiği.
+└── install.bat            # Windows sistemler için indirme betiği.
 ```
 
 ---
