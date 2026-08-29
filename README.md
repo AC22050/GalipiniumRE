@@ -32,7 +32,7 @@ Yazılımı kullanırken yürürlükteki tüm yerel ve ulusal yasalara uymak mü
 - **Sanal WebGL ve Tuval Koruyucusu (`fakewebgl.py`):** Tuval (Canvas) ve WebGL işleme çağrılarına rastgele gürültü (noise) enjekte ederek grafik tabanlı cihaz tanımlamasını imkansız hale getirir.
 - **DNS & WebRTC Sızıntı Koruması:** Gerçek IP adresinizin WebRTC STUN/TURN sorguları veya varsayılan sistem DNS'i üzerinden sızmasını donanım ve yazılım düzeyinde engeller.
 - **Sertleştirilmiş Chromium Çekirdeği:** Güvenlik açıklarını ve arka plan veri sızıntılarını önlemek için onlarca özel Chromium bayrağı (flags) ile yapılandırılmıştır.
-
+- **Virtual Javascript Spoof Layer:** Bu JavaScript katmanı; tarayıcı, ekran, donanım ve eklenti bilgilerini (parmak izi verilerini) sahte değerlerle maskeleyerek web sitelerinin gerçek sisteminizi tespit etmesini engeller ve gizliliğinizi korur.
 ---
 
 ## 📂 Proje Yapısı
