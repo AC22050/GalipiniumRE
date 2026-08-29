@@ -1,4 +1,6 @@
 # GalipiniumRE — Amnesic Secure Core Browser
+[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/AC22050/GalipiniumRE)
+
 
 ![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
 ![GUI Framework](https://img.shields.io/badge/GUI-PyQt6%20%2F%20QtWebEngine-green.svg)
