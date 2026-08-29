@@ -41,7 +41,7 @@ Yazılımı kullanırken yürürlükteki tüm yerel ve ulusal yasalara uymak mü
 
 ```
 GalipiniumRE/
-├── galipiniumRE-1.0.py    # Ana uygulama ve PyQt6 GUI arayüzü
+├── galipiniumRE-2.0.py    # Ana uygulama ve PyQt6 GUI arayüzü
 ├── fakefpu.py             # Donanım FPU simülasyonu ve parmak izi koruması
 ├── faketcpip.py           # Sentetik TCP/IP paket yapılandırması & DPI engelleme
 ├── fakewebgl.py           # WebGL & Canvas gürültü/maskeleme modülü
