@@ -1,0 +1,13 @@
+v1.1.4-alpha
+Security Hardened Release
+Date: 2026-08-29
+
+Key Updates:
+✅ SSL Certificate Validation Fixed
+✅ Fullscreen Request Protection
+✅ URL Protocol Whitelist (XSS Prevention)
+✅ JavaScript Isolation Layer
+✅ Amnesic Memory Architecture
+✅ FPU Emulator v2.0 (Enhanced Spoofing)
+✅ TCP/IP Stack v2.0 (Polymorphic DPI Evasion)
+✅ WebGL Shield v2.0 (Multi-layer Canvas Protection)
