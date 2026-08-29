@@ -18,7 +18,6 @@ from PyQt6.QtWebEngineCore import (
     QWebEngineDownloadRequest, QWebEngineScript
 )
 
-
 from fakefpu import get_virtual_fpu_instance
 from faketcpip import get_virtual_tcpip_instance
 from fakewebgl import get_hyper_sophisticated_webgl_canvas_shield_instance
@@ -29,9 +28,12 @@ class CustomWebEnginePage(QWebEnginePage):
         self.fpu_instance = get_virtual_fpu_instance()
         self.tcpip_instance = get_virtual_tcpip_instance()
         self.webgl_shield_instance = get_hyper_sophisticated_webgl_canvas_shield_instance()
+        self.fullScreenRequested.connect(self.handle_fullscreen)
+
+    def handle_fullscreen(self, request):
+        request.accept()
 
     def certificateError(self, error):
-        
         return False
 
 
@@ -55,7 +57,6 @@ class BrowserWindow(QMainWindow):
         self.configure_profile()
         self.profile.downloadRequested.connect(self.handle_download)
 
-        -
         self.inject_global_anti_fingerprint_script()
 
         central_widget = QWidget()
@@ -95,43 +96,249 @@ class BrowserWindow(QMainWindow):
         (function() {
             'use strict';
 
-            // --- 1. WEBGL CONTEXT KESİN OLARAK DEVRE DIŞI BIRAKMA (NULL DÖNDÜRME) ---
-            try {
-                delete window.WebGLRenderingContext;
-                delete window.WebGL2RenderingContext;
-            } catch (e) {}
+            const VirtualJSSpoofEngine = {
+                init: function() {
+                    this.spoofNavigator();
+                    this.spoofScreen();
+                    this.spoofPerformance();
+                    this.spoofTiming();
+                    this.spoofStorage();
+                    this.spoofNetwork();
+                    this.spoofMedia();
+                    this.spoofErrors();
+                    this.spoofWebGLCanvas();
+                },
 
-            const originalGetContext = HTMLCanvasElement.prototype.getContext;
-            HTMLCanvasElement.prototype.getContext = function(contextType) {
-                if (contextType && (contextType.includes('webgl') || contextType.includes('experimental-webgl'))) {
-                    return null; 
-                }
-                if (contextType === '2d') {
-                    const ctx = originalGetContext.apply(this, arguments);
-                    if (ctx) {
-                        ctx.getImageData = function() {
-                            throw new Error("getImageData blocked by security policy.");
+                spoofNavigator: function() {
+                    const navKeys = {
+                        webdriver: { get: () => false },
+                        hardwareConcurrency: { get: () => 8 },
+                        deviceMemory: { get: () => 8 },
+                        maxTouchPoints: { get: () => 0 },
+                        platform: { get: () => 'Win32' },
+                        vendor: { get: () => 'Google Inc.' },
+                        vendorSub: { get: () => '' },
+                        product: { get: () => 'Gecko' },
+                        productSub: { get: () => '20030107' },
+                        languages: { get: () => ['en-US', 'en'] },
+                        language: { get: () => 'en-US' },
+                        doNotTrack: { get: () => null },
+                        cookieEnabled: { get: () => true },
+                        onLine: { get: () => true }
+                    };
+
+                    for (const [key, descriptor] of Object.entries(navKeys)) {
+                        try {
+                            Object.defineProperty(navigator, key, {
+                                get: descriptor.get,
+                                enumerable: true,
+                                configurable: true
+                            });
+                        } catch (e) {}
+                    }
+
+                    if (navigator.plugins) {
+                        try {
+                            const fakePlugins = {
+                                length: 0,
+                                item: function(index) { return null; },
+                                namedItem: function(name) { return null; },
+                                refresh: function() {}
+                            };
+                            Object.defineProperty(navigator, 'plugins', {
+                                get: () => fakePlugins,
+                                enumerable: true,
+                                configurable: true
+                            });
+                        } catch (e) {}
+                    }
+
+                    if (navigator.mimeTypes) {
+                        try {
+                            const fakeMimeTypes = {
+                                length: 0,
+                                item: function(index) { return null; },
+                                namedItem: function(name) { return null; }
+                            };
+                            Object.defineProperty(navigator, 'mimeTypes', {
+                                get: () => fakeMimeTypes,
+                                enumerable: true,
+                                configurable: true
+                            });
+                        } catch (e) {}
+                    }
+                },
+
+                spoofScreen: function() {
+                    const screenProps = {
+                        width: 1920,
+                        height: 1080,
+                        availWidth: 1920,
+                        availHeight: 1040,
+                        colorDepth: 24,
+                        pixelDepth: 24
+                    };
+
+                    for (const [key, val] of Object.entries(screenProps)) {
+                        try {
+                            Object.defineProperty(screen, key, {
+                                get: () => val,
+                                enumerable: true,
+                                configurable: true
+                            });
+                        } catch (e) {}
+                    }
+                },
+
+                spoofPerformance: function() {
+                    if (window.performance && window.performance.now) {
+                        const originalNow = window.performance.now.bind(window.performance);
+                        const jitterOffset = Math.random() * 0.05;
+                        try {
+                            Object.defineProperty(window.performance, 'now', {
+                                value: function() {
+                                    return originalNow() + jitterOffset;
+                                },
+                                writable: true,
+                                configurable: true
+                            });
+                        } catch (e) {}
+                    }
+
+                    if (window.performance && window.performance.memory) {
+                        try {
+                            const fakeMemory = {
+                                jsHeapSizeLimit: 2172649472,
+                                totalJSHeapSize: 16777216,
+                                usedJSHeapSize: 10485760
+                            };
+                            Object.defineProperty(window.performance, 'memory', {
+                                get: () => fakeMemory,
+                                enumerable: true,
+                                configurable: true
+                            });
+                        } catch (e) {}
+                    }
+                },
+
+                spoofTiming: function() {
+                    if (window.Date) {
+                        const OriginalDate = window.Date;
+                        const spoofedDateObject = function(...args) {
+                            if (args.length === 0) {
+                                const d = new OriginalDate();
+                                return d;
+                            }
+                            return new OriginalDate(...args);
+                        };
+                        spoofedDateObject.now = function() {
+                            return OriginalDate.now();
+                        };
+                        spoofedDateObject.parse = OriginalDate.parse;
+                        spoofedDateObject.UTC = OriginalDate.UTC;
+                        window.Date = spoofedDateObject;
+                    }
+                },
+
+                spoofStorage: function() {
+                    try {
+                        const dummyStorage = {
+                            getItem: function(key) { return null; },
+                            setItem: function(key, val) {},
+                            removeItem: function(key) {},
+                            clear: function() {},
+                            key: function(index) { return null; },
+                            length: 0
+                        };
+                        Object.defineProperty(window, 'localStorage', {
+                            get: () => dummyStorage,
+                            configurable: true
+                        });
+                        Object.defineProperty(window, 'sessionStorage', {
+                            get: () => dummyStorage,
+                            configurable: true
+                        });
+                    } catch (e) {}
+                },
+
+                spoofNetwork: function() {
+                    if (navigator.connection) {
+                        try {
+                            const fakeConnection = {
+                                downlink: 10,
+                                effectiveType: '4g',
+                                rtt: 50,
+                                saveData: false
+                            };
+                            Object.defineProperty(navigator, 'connection', {
+                                get: () => fakeConnection,
+                                enumerable: true,
+                                configurable: true
+                            });
+                        } catch (e) {}
+                    }
+                },
+
+                spoofMedia: function() {
+                    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                        try {
+                            navigator.mediaDevices.enumerateDevices = async function() {
+                                return [
+                                    {deviceId: 'default', kind: 'audioinput', label: 'Default Audio Input', groupId: 'default'},
+                                    {deviceId: 'default', kind: 'videoinput', label: 'Default Video Input', groupId: 'default'}
+                                ];
+                            };
+                        } catch (e) {}
+                    }
+                },
+
+                spoofErrors: function() {
+                    const originalErrorCaptureStackTrace = Error.captureStackTrace;
+                    if (originalErrorCaptureStackTrace) {
+                        Error.captureStackTrace = function(targetObject, constructorOpt) {
+                            originalErrorCaptureStackTrace(targetObject, constructorOpt);
+                            if (targetObject && targetObject.stack) {
+                                targetObject.stack = targetObject.stack.replace(/at\s+.+?\s+\(.+?\)/g, 'at secure_context (native)');
+                            }
                         };
                     }
-                    return ctx;
+                },
+
+                spoofWebGLCanvas: function() {
+                    try {
+                        delete window.WebGLRenderingContext;
+                        delete window.WebGL2RenderingContext;
+                    } catch (e) {}
+
+                    const originalGetContext = HTMLCanvasElement.prototype.getContext;
+                    HTMLCanvasElement.prototype.getContext = function(contextType) {
+                        if (contextType && (contextType.includes('webgl') || contextType.includes('experimental-webgl'))) {
+                            return null;
+                        }
+                        if (contextType === '2d') {
+                            const ctx = originalGetContext.apply(this, arguments);
+                            if (ctx) {
+                                ctx.getImageData = function() {
+                                    throw new Error("getImageData blocked by security policy.");
+                                };
+                            }
+                            return ctx;
+                        }
+                        return originalGetContext.apply(this, arguments);
+                    };
+
+                    HTMLCanvasElement.prototype.toDataURL = function() {
+                        throw new Error("Canvas data export blocked by security policy.");
+                    };
                 }
-                return originalGetContext.apply(this, arguments);
             };
 
-            // --- 2. CANVAS FINGERPRINT BLOKLAMA ---
-            HTMLCanvasElement.prototype.toDataURL = function() {
-                throw new Error("Canvas data export blocked by security policy.");
-            };
-
-            // --- 3. NAVIGATOR KORUMALARI ---
-            Object.defineProperty(navigator, 'webdriver', { get: () => false });
-            Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => 8 });
-            Object.defineProperty(navigator, 'deviceMemory', { get: () => 8 });
+            VirtualJSSpoofEngine.init();
         })();
         """
         
         script = QWebEngineScript()
-        script.setName("AntiFingerprintShieldZeroWebGL")
+        script.setName("VirtualJSSpoofEmulationShield")
         script.setSourceCode(script_code)
         script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentCreation)
         script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld)
@@ -141,7 +348,7 @@ class BrowserWindow(QMainWindow):
     def feed_realtime_nmea(self):
         lat = 41.0082 + random.uniform(-0.001, 0.001)
         lon = 28.9784 + random.uniform(-0.001, 0.001)
-        self.status_bar.showMessage(f"Amnesic Mod | WebGL Kapalı & DNS Sızıntısı Korumalı |")
+        self.status_bar.showMessage("Amnesic Mod | JS Spoofer & WebGL Kapalı & DNS Sızıntısı Korumalı |")
 
     def configure_profile(self):
         self.profile.setHttpCacheType(QWebEngineProfile.HttpCacheType.MemoryHttpCache)
@@ -271,7 +478,7 @@ class BrowserWindow(QMainWindow):
         <body>
             <div class="box">
                 <h1>Galipinium<span>RE</span></h1>
-                <p>DNS Sızıntı Kalkanı & Zero WebGL Aktif</p>
+                <p>DNS Sızıntı Kalkanı & Sanal JS Emülasyon Katmanı Aktif</p>
                 <input type="text" placeholder="Güvenli arama yap..." autofocus onkeydown="if(event.key==='Enter'){window.location.href='https://html.duckduckgo.com/html/?q='+encodeURIComponent(this.value);}">
             </div>
         </body>
@@ -331,7 +538,7 @@ class BrowserWindow(QMainWindow):
         layout = QVBoxLayout(dialog)
         form = QFormLayout()
         form.addRow("DNS Sızıntı Kalkanı:", QLabel("Aktif (Prefetch & Background Kilitli)"))
-        form.addRow("WebGL Durumu:", QLabel("Devre Dışı (Null Context)"))
+        form.addRow("JS Emülasyon Katmanı:", QLabel("Aktif (Virtual Spoof Emulation)"))
         form.addRow("WebRTC Politika:", QLabel("Non-Proxied UDP Engellendi"))
         layout.addLayout(form)
         btn = QPushButton("Kapat")
@@ -358,7 +565,6 @@ if __name__ == "__main__":
     sys.argv.append("--disable-gpu")
     sys.argv.append("--disable-gpu-shader-disk-cache")
     sys.argv.append("--enable-unsafe-swiftshader")
-    
     
     sys.argv.append("--force-webrtc-ip-handling-policy=disable_non_proxied_udp")
     sys.argv.append("--disable-dns-prefetch")             
